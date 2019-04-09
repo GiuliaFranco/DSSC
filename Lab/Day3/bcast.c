@@ -40,24 +40,28 @@
 
 
 int main( int argc, char * argv[] ){
-
-  int imesg = 0;
+  int N=25000000;
+  //int imesg = 0;
   int rank = 0; // store the MPI identifier of the process
   int npes = 1; // store the number of MPI processes
-
+  int *imesg = (int *) malloc(sizeof(int) * 25000000);
   MPI_Init( &argc, &argv );
   MPI_Comm_rank( MPI_COMM_WORLD, &rank );
   MPI_Comm_size( MPI_COMM_WORLD, &npes );
-
-  imesg = rank;
-  fprintf( stderr, "\nBefore Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg );
-
-  MPI_Bcast( &imesg, 1, MPI_INT, 0, MPI_COMM_WORLD );
-
-  fprintf( stderr, "\nAfter Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg );
-
+    
+  //imesg = rank;
+  for(int i=0;i<25000000;i++){ 
+	imesg[i]=-npes;
+  }
+  fprintf( stderr, "\nBefore Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg[N-1] );
+  //fprintf( stderr, "\nBefore Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg );
+  //just some processes will go into the broadcast. Since we have a collective call this will arise a deadblock.
+  //if(rank % 2 ) MPI_Bcast( &imesg, 1, MPI_INT, 0, MPI_COMM_WORLD );
+  MPI_Bcast( imesg, N, MPI_INT, 0, MPI_COMM_WORLD );
+  //fprintf( stderr, "\nAfter Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg );
+  fprintf( stderr, "\nBefore Bcast operation I am process %d of %d MPI processes and my message content is: %d\n", rank, npes, imesg[N-1] );
   MPI_Finalize();
-  
+  free(imesg);
   return 0;
 
 }
