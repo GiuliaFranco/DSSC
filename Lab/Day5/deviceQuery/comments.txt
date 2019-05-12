@@ -1,0 +1,10 @@
+CUDA cores: 2500 
+Clock rate: slow
+
+NB--> lots of cores but slow. They work well together.
+
+Maximum # of threads per block: 1024 
+
+Device has ECC support: Enabled --> memory error enabled.
+
+

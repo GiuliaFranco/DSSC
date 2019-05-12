@@ -1,0 +1,17 @@
+reserve gpu
+
+2 software : driver and cuda-tool-kit ---> new tool kit every 6 months (use last version available)
+
+1- module load cudatoolkit/10.0
+
+Inside the cudatoolkit/10.0, the samples folder there's a collection of open source code mostly used.
+
+2- qsub -q gpu -l walltime=1:00:00,nodes=1:ppn=20 -I
+
+2.a- nvidia-smi  //info about the gpu in the machine and the processes running.
+
+2.b- nvidia-smi topo -mp  //reveals the topology of the socket: GPUs closest to some CPUs. In this way we can choose the closest one that minimize bandwidth.
+
+NB: I can run a gpu code even without gpu if the driver is installed but i'll return random values.
+
+

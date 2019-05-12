@@ -1,0 +1,4 @@
+# Threads  Naive Transpose(ms)  Naive Bandwidth (GB/s)   Improved Transpose(ms)  Improved Bandwidth (GB/s)
+64	            63.615906	             8.439256	             9.569536	            56.102083	
+512	            18.118273	            29.631462	             8.670496	            61.919285	
+1024	            13.788160	            38.937095	             9.757664	            55.020436	
