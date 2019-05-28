@@ -67,17 +67,17 @@ void RunTest(int BLOCK,const int nx,const int ny,const int size){
   cudaEvent_t startEvent, stopEvent;
   cudaEventCreate(&startEvent);
   cudaEventCreate(&stopEvent);
-  float time;
+  float time_m;
 
   cudaMemset(d_out, 0, size);
   cudaEventRecord(startEvent, 0);
   transposeNaive<<<dimGrid, dimBlock>>>(d_out, d_in,BLOCK);
   cudaEventRecord(stopEvent, 0);
   cudaEventSynchronize(stopEvent);
-  cudaEventElapsedTime(&time, startEvent, stopEvent);   //milliseconds
-  printf("%21f\t",time);
+  cudaEventElapsedTime(&time_m, startEvent, stopEvent);   //milliseconds
+  printf("%21f\t",time_m);
   cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
-  postprocess(nx * ny, time);
+  postprocess(nx * ny, time_m);
 
 
   cudaMemset(d_out, 0, size); //Reset matrix so i don't have to allocate a new one
@@ -85,10 +85,10 @@ void RunTest(int BLOCK,const int nx,const int ny,const int size){
   transposeImproved<<<dimGrid, dimBlock>>>(d_out, d_in,BLOCK);
   cudaEventRecord(stopEvent, 0);
   cudaEventSynchronize(stopEvent);
-  cudaEventElapsedTime(&time, startEvent, stopEvent);
-  printf("%21f\t",time);
+  cudaEventElapsedTime(&time_m, startEvent, stopEvent);
+  printf("%21f\t",time_m);
   cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
-  postprocess(nx * ny, timev);
+  postprocess(nx * ny, time_m);
   printf("\n");
 
   // cleanup
