@@ -25,14 +25,14 @@ __global__ void transposeNaive(double *out,double *in,int BLOCK)
 
 __global__ void transposeImproved(double *out, double *in,int BLOCK)
 {
-  __shared__ float tile[DIM][DIM];
+  __shared__ double aux_mat[DIM][DIM];
     
   int x = blockIdx.x * DIM + threadIdx.x;
   int y = blockIdx.y * DIM + threadIdx.y;
   int width = gridDim.x * DIM;
 
   for (int j = 0; j < DIM; j += BLOCK)
-     tile[threadIdx.y+j][threadIdx.x] = in[(y+j)*width + x];
+     aux_mat[threadIdx.y+j][threadIdx.x] = in[(y+j)*width + x];
 //use shared memory in order to transpose the matrix and write back to out in row-wise.
   __syncthreads();  //needed in order to ensure that all the writes are performed.
 
@@ -40,7 +40,7 @@ __global__ void transposeImproved(double *out, double *in,int BLOCK)
   y = blockIdx.x * DIM + threadIdx.y;
 
   for (int j = 0; j < DIM; j += BLOCK)
-     out[(y+j)*width + x] = tile[threadIdx.x][threadIdx.y + j];
+     out[(y+j)*width + x] = aux_mat[threadIdx.x][threadIdx.y + j];
 }
    
 void RunTest(int BLOCK,const int nx,const int ny,const int mem_size){
