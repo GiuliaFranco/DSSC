@@ -70,6 +70,7 @@ void RunTest(int BLOCK,const int nx,const int ny,const int size){
   cudaEventCreate(&stopEvent);
   float time_m;
 
+//time measures might contain overhead due to kernel lauch     
   cudaMemset(d_out, 0, size);
   cudaEventRecord(startEvent, 0);
   transposeNaive<<<dimGrid, dimBlock>>>(d_out, d_in,BLOCK);
