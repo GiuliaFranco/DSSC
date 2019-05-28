@@ -43,17 +43,17 @@ __global__ void transposeImproved(double *out, double *in,int BLOCK)
      out[(y+j)*width + x] = aux_mat[threadIdx.x][threadIdx.y + j];
 }
    
-void RunTest(int BLOCK,const int nx,const int ny,const int mem_size){
+void RunTest(int BLOCK,const int nx,const int ny,const int size){
   dim3 dimGrid(nx/DIM, ny/DIM, 1);
   dim3 dimBlock(DIM, BLOCK, 1);
   printf("%d\t",DIM*BLOCK);
   
-  double *h_in = (double*)malloc(mem_size);
-  double *h_out = (double*)malloc(mem_size);
+  double *h_in = (double*)malloc(size);
+  double *h_out = (double*)malloc(size);
 
   double *d_in, *d_out;
-  cudaMalloc(&d_in, mem_size);
-  cudaMalloc(&d_out, mem_size);
+  cudaMalloc(&d_in, size);
+  cudaMalloc(&d_out, size);
 
   // host
   for (int j = 0; j < ny; j++)
@@ -61,34 +61,34 @@ void RunTest(int BLOCK,const int nx,const int ny,const int mem_size){
       h_in[j*nx + i] = i;
 
   // device
-  cudaMemcpy(d_in, h_in, mem_size, cudaMemcpyHostToDevice);
+  cudaMemcpy(d_in, h_in, size, cudaMemcpyHostToDevice);
 
   // events for timing
   cudaEvent_t startEvent, stopEvent;
   cudaEventCreate(&startEvent);
   cudaEventCreate(&stopEvent);
-  float ms;
+  float time;
 
-  cudaMemset(d_out, 0, mem_size);
+  cudaMemset(d_out, 0, size);
   cudaEventRecord(startEvent, 0);
   transposeNaive<<<dimGrid, dimBlock>>>(d_out, d_in,BLOCK);
   cudaEventRecord(stopEvent, 0);
   cudaEventSynchronize(stopEvent);
-  cudaEventElapsedTime(&ms, startEvent, stopEvent);   //milliseconds
-  printf("%21f\t",ms);
-  cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
-  postprocess(nx * ny, ms);
+  cudaEventElapsedTime(&time, startEvent, stopEvent);   //milliseconds
+  printf("%21f\t",time);
+  cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
+  postprocess(nx * ny, time);
 
 
-  cudaMemset(d_out, 0, mem_size); //Reset matrix so i don't have to allocate a new one
+  cudaMemset(d_out, 0, size); //Reset matrix so i don't have to allocate a new one
   cudaEventRecord(startEvent, 0);
   transposeImproved<<<dimGrid, dimBlock>>>(d_out, d_in,BLOCK);
   cudaEventRecord(stopEvent, 0);
   cudaEventSynchronize(stopEvent);
-  cudaEventElapsedTime(&ms, startEvent, stopEvent);
-  printf("%21f\t",ms);
-  cudaMemcpy(h_out, d_out, mem_size, cudaMemcpyDeviceToHost);
-  postprocess(nx * ny, ms);
+  cudaEventElapsedTime(&time, startEvent, stopEvent);
+  printf("%21f\t",time);
+  cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
+  postprocess(nx * ny, timev);
   printf("\n");
 
   // cleanup
@@ -111,9 +111,9 @@ int main(int argc, char **argv)
   int BLOCK_3 = 32; 				//each block transpose a submatrix of DIMxDIM size 
   const int nx = 8192;
   const int ny = 8192;
-  const int mem_size = nx*ny*sizeof(double);
+  const int size = nx*ny*sizeof(double);
 
-  RunTest(BLOCK_1,nx,ny,mem_size);
-  RunTest(BLOCK_2,nx,ny,mem_size);
-  RunTest(BLOCK_3,nx,ny,mem_size);
+  RunTest(BLOCK_1,nx,ny,size);
+  RunTest(BLOCK_2,nx,ny,size);
+  RunTest(BLOCK_3,nx,ny,size);
 }
