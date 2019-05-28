@@ -7,7 +7,8 @@ const int DIM = 32;
 void postprocess(int n, float ms)
 {
 
-    printf("%21f\t", n * sizeof(double)*1e-6 / ms );
+    printf("%21f\t", n * sizeof(double)*1e-6 / ms );   //can be multiplied by 2 -> once for reading the matrix and the other
+                                                       //for writing.
 }
 //Read the in matrix using pieces of 32 items.
 // naive transpose
