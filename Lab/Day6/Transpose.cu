@@ -11,7 +11,6 @@ void postprocess(int n, float ms)
 }
 //Read the in matrix using pieces of 32 items.
 // naive transpose
-// Simplest transpose; doesn't use shared memory.
 __global__ void transposeNaive(double *out,double *in,int BLOCK)
 {
   int x = blockIdx.x * DIM + threadIdx.x;
