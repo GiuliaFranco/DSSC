@@ -55,8 +55,9 @@ int critical(int N){
         int local_n=N/nthreads;
         double local_a=local_n*tid*h;
         double local_b=local_a+h*local_n;
+	double global=local_sum(local_a,local_b,local_n,h);
 	#pragma omp critical
-        global_result+=local_sum(local_a,local_b,local_n,h);
+        global_result+=global;
 }
 
         return global_result*4;
@@ -87,8 +88,8 @@ int main( int argc, char * argv[] ) {
 	double N=1000000000;
 	double h=1/N;
 	//printf("serial approximation:\n");
-	//printf("%lf\n",serial_approx(0,1,h,N));
-/*
+	printf("%lf\n",serial_approx(0,1,h,N));
+
 	double final_duration=0.0;
 	double tstart=0.0;
 	tstart=omp_get_wtime();
@@ -102,7 +103,7 @@ int main( int argc, char * argv[] ) {
         critical(N);
         final_duration_c=omp_get_wtime()-tstart_c;
         printf("\t%lf\n",final_duration_c);	
-*/
+
 	double final_duration_a=0.0;
         double tstart_a=0.0;
         tstart_a=omp_get_wtime();
