@@ -42,7 +42,7 @@ for(k=0;k<npes;k++){
 
 //All processes sums locally what received and send.
 for(i=0;i<npes;i++){
-   	MPI_Isend(vect,N,MPI_INT,(rank+1)%npes,101,MPI_COMM_WORLD,&send_request);  
+   	MPI_Isend(vect,N,MPI_INT,(rank+1+npes)%npes,101,MPI_COMM_WORLD,&send_request);  
 	for(j=0;j<N;j++){sum[j]+=vect[j];}
 	MPI_Wait(&send_request,&status);
 	MPI_Irecv(rec_vect,N, MPI_INT,(rank-1+npes)%npes,101,MPI_COMM_WORLD,&recv_request);
