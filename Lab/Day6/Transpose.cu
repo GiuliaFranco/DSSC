@@ -16,10 +16,9 @@ __global__ void transposeNaive(double *out,double *in,int BLOCK)
 {
   int x = blockIdx.x * DIM + threadIdx.x;
   int y = blockIdx.y * DIM + threadIdx.y;
-  int width = gridDim.x * DIM;
-
+  
   for (int j = 0; j < DIM; j+= BLOCK)
-    out[x*width + (y+j)] = in[(y+j)*width + x];   
+    out[x*(gridDim.x * DIM) + (y+j)] = in[(y+j)*(gridDim.x * DIM) + x];   
 //each thread executing transpose DIM/BLOCK_i elements from in column into out row. 
 }
 
@@ -30,10 +29,9 @@ __global__ void transposeImproved(double *out, double *in,int BLOCK)
     
   int x = blockIdx.x * DIM + threadIdx.x;
   int y = blockIdx.y * DIM + threadIdx.y;
-  int width = gridDim.x * DIM;
-
+  
   for (int j = 0; j < DIM; j += BLOCK)
-     aux_mat[threadIdx.y+j][threadIdx.x] = in[(y+j)*width + x];
+     aux_mat[threadIdx.y+j][threadIdx.x] = in[(y+j)*(gridDim.x * DIM) + x];
 //use shared memory in order to transpose the matrix and write back to out in row-wise.
   __syncthreads();  //needed in order to ensure that all the writes are performed.
 
@@ -41,7 +39,7 @@ __global__ void transposeImproved(double *out, double *in,int BLOCK)
   y = blockIdx.x * DIM + threadIdx.y;
 
   for (int j = 0; j < DIM; j += BLOCK)
-     out[(y+j)*width + x] = aux_mat[threadIdx.x][threadIdx.y + j];
+     out[(y+j)*(gridDim.x * DIM) + x] = aux_mat[threadIdx.x][threadIdx.y + j];
 }
    
 void RunTest(int BLOCK,const int nx,const int ny,const int size){
