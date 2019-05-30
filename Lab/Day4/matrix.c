@@ -111,8 +111,9 @@ int main( int argc, char * argv[] ){
 
 		//first iteration is to write the  root values and receive the proc-1
 		MPI_Irecv(buffer2,leng,MPI_INT,1,101,MPI_COMM_WORLD,&recv_request);
-		MPI_Wait(&recv_request, &status);
+		//MPI_Wait(&recv_request, &status);
 		fwrite(buffer1, sizeof(int), leng , data_file);
+		MPI_Wait(&recv_request, &status);
 		printMatrix(buffer1,num_el,N);
 
 		
