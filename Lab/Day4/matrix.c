@@ -142,6 +142,10 @@ int main( int argc, char * argv[] ){
 		printf("\n");
 		printMatrix(complete_mat,N,N);
 		fclose(data_file);		
+		free(buffer1);
+		free(buffer2);
+		free(rest_buffer);
+		free(complete_mat);
 	}
 
 
